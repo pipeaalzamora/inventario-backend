@@ -1,0 +1,58 @@
+version: '3.7'
+name: sofia-backend-dev
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      search:
+        condition: service_started
+
+    env_file:
+      - ./.env.dev
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '6379:6379'
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./migrations/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./migrations/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  search:
+    image: getmeili/meilisearch:v1.15
+    ports:
+      - '7700:7700'
+    environment:
+      MEILI_MASTER_KEY: 'MASTER_KEY'
+    command: meilisearch --master-key 'MASTER_KEY'
+    volumes:
+      - meilisearch_data:/data.ms
+
+volumes:
+  postgres_data:
+  meilisearch_data:
+  redis:

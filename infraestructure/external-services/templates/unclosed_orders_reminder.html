@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Órdenes Pendientes - SmartOrder</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f5f6
+        }
+
+        table {
+            border-collapse: separate;
+            width: 100%
+        }
+
+        table td {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            vertical-align: top
+        }
+
+        .body {
+            background-color: #f4f5f6;
+            width: 100%
+        }
+
+        .container {
+            margin: 0 auto !important;
+            max-width: 600px;
+            padding: 24px 0;
+            width: 600px
+        }
+
+        .content {
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+            max-width: 600px
+        }
+
+        .main {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, .07)
+        }
+
+        .wrapper {
+            padding: 48px 40px
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 40px;
+            text-align: center
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, .1)
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, .2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center
+        }
+
+        .alert-box h2 {
+            color: #991b1b;
+            font-size: 24px;
+            margin: 0 0 8px;
+            font-weight: 700
+        }
+
+        .alert-box p {
+            margin: 0;
+            color: #b91c1c;
+            font-size: 16px
+        }
+
+        .count-badge {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ef4444;
+            margin: 16px 0
+        }
+
+        .orders-list {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0
+        }
+
+        .order-item {
+            background: #fff;
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .05)
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px
+        }
+
+        .order-id {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827
+        }
+
+        .order-days {
+            font-size: 14px;
+            color: #ef4444;
+            font-weight: 600
+        }
+
+        .order-info {
+            font-size: 14px;
+            color: #6b7280
+        }
+
+        .btn {
+            width: 100%;
+            margin: 32px 0
+        }
+
+        .btn table {
+            width: 100%
+        }
+
+        .btn table td {
+            text-align: center
+        }
+
+        .btn a {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 8px;
+            color: #fff;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 16px 48px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            box-shadow: 0 4px 6px rgba(239, 68, 68, .3)
+        }
+
+        p {
+            font-size: 16px;
+            margin: 0 0 16px;
+            color: #374151;
+            line-height: 1.6
+        }
+
+        .footer {
+            padding: 32px 40px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px
+        }
+
+        .footer p {
+            margin: 8px 0;
+            color: #9ca3af;
+            font-size: 14px
+        }
+
+        .brand {
+            font-weight: 700;
+            color: #ef4444;
+            font-size: 16px
+        }
+
+        @media only screen and (max-width:640px) {
+            .container {
+                padding: 8px !important;
+                width: 100% !important
+            }
+
+            .wrapper,
+            .footer {
+                padding: 24px !important
+            }
+
+            .main {
+                border-radius: 8px !important
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 4px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+        <tr>
+            <td>&nbsp;</td>
+            <td class="container">
+                <div class="content">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+                        <tr>
+                            <td class="header">
+                                <div class="icon">⏰</div>
+                                <h1>Órdenes Sin Cerrar</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="wrapper">
+                                <div class="alert-box">
+                                    <h2>Recordatorio Importante</h2>
+                                    <p>Tienes órdenes pendientes de cerrar</p>
+                                    <div class="count-badge">{{ .OrderCount }}</div>
+                                    <p style="font-size:14px;margin-top:8px">{{ if eq .OrderCount 1 }}Orden Pendiente{{
+                                        else }}Órdenes Pendientes{{ end }}</p>
+                                </div>
+                                <p>Hola {{ .UserName }},</p>
+                                <p>Te recordamos que tienes <strong>{{ .OrderCount }} {{ if eq .OrderCount 1 }}orden{{
+                                        else }}órdenes{{ end }}</strong> que {{ if eq .OrderCount 1 }}no ha sido
+                                    cerrada{{ else }}no han sido cerradas{{ end }}:</p>
+                                <div class="orders-list">{{ range .Orders }}<div class="order-item">
+                                        <div class="order-header"><span class="order-id">Orden #{{ .OrderID
+                                                }}</span><span class="order-days">{{ .DaysOpen }} días abierta</span>
+                                        </div>
+                                        <div class="order-info">
+                                            <div>Proveedor: {{ .SupplierName }}</div>
+                                            <div>Fecha: {{ .OrderDate }}</div>
+                                        </div>
+                                    </div>{{ end }}</div>
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><a href="{{ .OrdersUrl }}" target="_blank">Revisar
+                                                                    Órdenes</a></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="text-align:center;color:#6b7280;font-size:14px">Por favor, revisa y cierra
+                                    estas órdenes para mantener tu inventario actualizado.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="footer">
+                                <p class="brand">SmartOrder</p>
+                                <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</body>
+
+</html>

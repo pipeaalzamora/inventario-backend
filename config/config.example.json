@@ -1,0 +1,31 @@
+{   
+    "debug": true,
+    "port": 3000,
+    "jwt_secret": "your_jwt_secret",
+    "secret": "your_secret_key",
+    "base_url": "http://localhost:3000",
+    "search": {
+        "host": "http://localhost:7700",
+        "api_key": "MASTER_KEY"
+    },
+    "mailer": {
+        "api_key": "your_resend_api_key",
+        "mail_from": "Acme <onboarding@resend.dev>"
+    },
+    "postgres": {
+        "host": "localhost",
+        "port": 5432,
+        "db_user": "postgres",
+        "db_pass": "postgres",
+        "db_name": "postgres"
+    },
+    "mongo": {
+        "host": "mongodb://localhost:27017",
+        "db_name": "dbname"
+    },
+    "redis": {
+        "host": "localhost:6379",
+        "username": "",
+        "password": ""
+    }
+}

@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Solicitud de Aprobación - SmartOrder</title>
+    <style media="all" type="text/css">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f5f6;
+    }
+    
+    table {
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      width: 100%;
+    }
+    
+    table td {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      vertical-align: top;
+    }
+    
+    .body {
+      background-color: #f4f5f6;
+      width: 100%;
+    }
+    
+    .container {
+      margin: 0 auto !important;
+      max-width: 600px;
+      padding: 24px 0;
+      width: 600px;
+    }
+    
+    .content {
+      box-sizing: border-box;
+      display: block;
+      margin: 0 auto;
+      max-width: 600px;
+      padding: 0;
+    }
+    
+    .main {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+    
+    .wrapper {
+      box-sizing: border-box;
+      padding: 48px 40px;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      border-radius: 16px 16px 0 0;
+      padding: 40px 40px 32px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .icon-approval {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    
+    .alert-box {
+      background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+      border-left: 4px solid #8b5cf6;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    
+    .alert-box h2 {
+      color: #5b21b6;
+      font-size: 20px;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+    
+    .alert-box p {
+      margin: 0;
+      color: #6b21a8;
+      font-size: 16px;
+    }
+    
+    .request-details {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .detail-value {
+      font-size: 16px;
+      color: #111827;
+      font-weight: 600;
+      text-align: right;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      margin: 32px 0;
+    }
+    
+    .btn-approve {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .btn-approve a {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 32px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .btn-reject {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .btn-reject a {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 32px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .btn-view {
+      box-sizing: border-box;
+      width: 100%;
+      margin: 16px 0;
+    }
+    
+    .btn-view table {
+      width: 100%;
+    }
+    
+    .btn-view table td {
+      text-align: center;
+    }
+    
+    .btn-view a {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 48px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+    }
+    
+    .priority-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .priority-high {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .priority-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .priority-low {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .requester-box {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .requester-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .requester-info {
+      flex: 1;
+    }
+    
+    .requester-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    .requester-role {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    p {
+      font-size: 16px;
+      font-weight: normal;
+      margin: 0 0 16px;
+      color: #374151;
+      line-height: 1.6;
+    }
+    
+    .footer {
+      padding: 32px 40px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    
+    .footer p {
+      margin: 8px 0;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    
+    .brand {
+      font-weight: 700;
+      color: #8b5cf6;
+      font-size: 16px;
+    }
+    
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+      margin: 32px 0;
+    }
+    
+    @media only screen and (max-width: 640px) {
+      .container {
+        padding: 8px !important;
+        width: 100% !important;
+      }
+      .wrapper, .header, .footer {
+        padding: 24px !important;
+      }
+      .main {
+        border-radius: 8px !important;
+      }
+      .action-buttons {
+        flex-direction: column !important;
+      }
+      .detail-row {
+        flex-direction: column !important;
+        gap: 8px;
+      }
+      .detail-value {
+        text-align: left !important;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+          <div class="content">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+              <tr>
+                <td class="header">
+                  <div class="icon-approval">✓</div>
+                  <h1>Solicitud de Aprobación</h1>
+                </td>
+              </tr>
+              <tr>
+                <td class="wrapper">
+                  <div class="alert-box">
+                    <h2>Requiere tu aprobación</h2>
+                    <p>Se ha generado una nueva solicitud que necesita tu revisión y aprobación.</p>
+                  </div>
+                  
+                  <p>Hola {{ .ApproverName }},</p>
+                  <p>Has recibido una nueva <strong>solicitud de aprobación</strong> en <strong>SmartOrder</strong>.</p>
+                  
+                  <div class="requester-box">
+                    <div class="requester-avatar">{{ .RequesterInitials }}</div>
+                    <div class="requester-info">
+                      <span class="requester-name">{{ .RequesterName }}</span>
+                      <span class="requester-role">{{ .RequesterRole }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="request-details">
+                    <div class="detail-row">
+                      <span class="detail-label">Tipo de Solicitud</span>
+                      <span class="detail-value">{{ .RequestType }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">ID de Solicitud</span>
+                      <span class="detail-value">{{ .RequestID }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Fecha de Solicitud</span>
+                      <span class="detail-value">{{ .RequestDate }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Prioridad</span>
+                      <span class="detail-value">
+                        <span class="priority-badge priority-{{ .Priority }}">{{ .Priority }}</span>
+                      </span>
+                    </div>
+                    {{ if .Amount }}
+                    <div class="detail-row">
+                      <span class="detail-label">Monto</span>
+                      <span class="detail-value">{{ .Amount }}</span>
+                    </div>
+                    {{ end }}
+                  </div>
+                  
+                  {{ if .Description }}
+                  <p><strong>Descripción:</strong></p>
+                  <p style="background: #f9fafb; padding: 16px; border-radius: 8px; border-left: 3px solid #8b5cf6;">
+                    {{ .Description }}
+                  </p>
+                  {{ end }}
+                  
+                  <div class="divider"></div>
+                  
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn-view">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <a href="{{ .Url }}" target="_blank">Ver Detalles Completos</a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 24px;">
+                    Revisa todos los detalles antes de tomar una decisión.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td class="footer">
+                  <p class="brand">SmartOrder</p>
+                  <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                  <p style="margin-top: 16px; font-size: 12px;">
+                    Las solicitudes de aprobación requieren acción dentro de las próximas 48 horas.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>

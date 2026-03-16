@@ -1,0 +1,46 @@
+version: '3.7'
+name: sofia-backend-local
+
+services:
+
+  redis:
+    image: 'redis:alpine'
+    container_name: redis-sofia
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  db:
+    image: postgres:14-alpine
+    container_name: db-sofia
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./migrations/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./migrations/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - postgres_data:/var/lib/postgresql/data
+
+  search:
+    image: getmeili/meilisearch:v1.15
+    container_name: search-sofia
+    ports:
+      - '7700:7700'
+    environment:
+      MEILI_MASTER_KEY: 'MASTER_KEY'
+    command: meilisearch --master-key 'MASTER_KEY'
+    volumes:
+      - meilisearch_data:/data.ms
+
+networks:
+  dot-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  meilisearch_data:
+  redis_data:

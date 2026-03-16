@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Conteo Asignado - SmartOrder</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f5f6
+        }
+
+        table {
+            border-collapse: separate;
+            width: 100%
+        }
+
+        table td {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            vertical-align: top
+        }
+
+        .body {
+            background-color: #f4f5f6;
+            width: 100%
+        }
+
+        .container {
+            margin: 0 auto !important;
+            max-width: 600px;
+            padding: 24px 0;
+            width: 600px
+        }
+
+        .content {
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+            max-width: 600px
+        }
+
+        .main {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, .07)
+        }
+
+        .wrapper {
+            padding: 48px 40px
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 40px;
+            text-align: center
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, .1)
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, .2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid #3b82f6;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0
+        }
+
+        .info-box h2 {
+            color: #1e40af;
+            font-size: 22px;
+            margin: 0 0 12px;
+            font-weight: 700
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 16px
+        }
+
+        .count-info {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb
+        }
+
+        .info-row:last-child {
+            border-bottom: none
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 600
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #111827;
+            font-weight: 600;
+            text-align: right
+        }
+
+        .btn {
+            width: 100%;
+            margin: 32px 0
+        }
+
+        .btn table {
+            width: 100%
+        }
+
+        .btn table td {
+            text-align: center
+        }
+
+        .btn a {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 8px;
+            color: #fff;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 16px 48px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, .3)
+        }
+
+        p {
+            font-size: 16px;
+            margin: 0 0 16px;
+            color: #374151;
+            line-height: 1.6
+        }
+
+        .footer {
+            padding: 32px 40px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px
+        }
+
+        .footer p {
+            margin: 8px 0;
+            color: #9ca3af;
+            font-size: 14px
+        }
+
+        .brand {
+            font-weight: 700;
+            color: #3b82f6;
+            font-size: 16px
+        }
+
+        @media only screen and (max-width:640px) {
+            .container {
+                padding: 8px !important;
+                width: 100% !important
+            }
+
+            .wrapper,
+            .footer {
+                padding: 24px !important
+            }
+
+            .main {
+                border-radius: 8px !important
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 4px
+            }
+
+            .info-value {
+                text-align: left !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+        <tr>
+            <td>&nbsp;</td>
+            <td class="container">
+                <div class="content">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+                        <tr>
+                            <td class="header">
+                                <div class="icon">📊</div>
+                                <h1>Conteo de Inventario Asignado</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="wrapper">
+                                <div class="info-box">
+                                    <h2>Nueva Tarea de Conteo</h2>
+                                    <p>Se te ha asignado un conteo de inventario</p>
+                                </div>
+                                <p>Hola {{ .UserName }},</p>
+                                <p>Se te ha asignado un nuevo conteo de inventario para <strong>{{ .StoreName
+                                        }}</strong>.</p>
+                                <div class="count-info">
+                                    <div class="info-row"><span class="info-label">Conteo N°:</span><span
+                                            class="info-value">#{{ .CountID }}</span></div>
+                                    <div class="info-row"><span class="info-label">Tienda:</span><span
+                                            class="info-value">{{ .StoreName }}</span></div>
+                                    <div class="info-row"><span class="info-label">Tipo de Conteo:</span><span
+                                            class="info-value">{{ .CountType }}</span></div>
+                                    <div class="info-row"><span class="info-label">Fecha de Asignación:</span><span
+                                            class="info-value">{{ .AssignedDate }}</span></div>
+                                    <div class="info-row"><span class="info-label">Asignado por:</span><span
+                                            class="info-value">{{ .AssignedBy }}</span></div>
+                                </div>{{ if .Notes }}<div
+                                    style="background:#f9fafb;border-radius:8px;padding:20px;margin:24px 0;border-left:3px solid #3b82f6">
+                                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:8px">📝
+                                        Instrucciones</div>
+                                    <div style="font-size:14px;color:#6b7280">{{ .Notes }}</div>
+                                </div>{{ end }}<table role="presentation" border="0" cellpadding="0" cellspacing="0"
+                                    class="btn">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><a href="{{ .CountUrl }}" target="_blank">Iniciar
+                                                                    Conteo</a></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="text-align:center;color:#6b7280;font-size:14px">Por favor, completa el conteo
+                                    lo antes posible.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="footer">
+                                <p class="brand">SmartOrder</p>
+                                <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</body>
+
+</html>
