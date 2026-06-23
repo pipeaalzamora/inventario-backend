@@ -1,0 +1,62 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      meilisearch:
+        image: getmeili/meilisearch:v1.15
+        env:
+          MEILI_MASTER_KEY: MASTER_KEY
+        ports:
+          - 7700:7700
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Apply schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f migrations/schema.sql
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f migrations/seed.sql
+          for migration in migrations/20*.sql; do
+            [ -e "$migration" ] || continue
+            psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f "$migration"
+          done
+
+      - name: Test
+        run: go test ./...
+
+      - name: Build image
+        run: docker build -t sofia-backend-ci:${{ github.sha }} .
