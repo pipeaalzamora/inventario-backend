@@ -139,6 +139,10 @@ func (s *UserService) UpdateUserNotAuth(ctx context.Context, id string, recipe *
 	return updatedUser, nil
 }
 
+func (s *UserService) UpdateUserPasswordHashOnly(ctx context.Context, id string, password string) error {
+	return s.userAccountRepo.UpdateUserPasswordHashOnly(id, password)
+}
+
 func (s *UserService) DeactivateUser(ctx context.Context, id string) error {
 	if ok := s.EveryPower(ctx, PowerUserDelete); !ok {
 		return shared.PowerError{Message: fmt.Sprintf("User does not have %s power", PowerUserDelete)}

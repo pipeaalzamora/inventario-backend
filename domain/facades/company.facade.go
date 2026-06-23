@@ -48,6 +48,46 @@ func (f *CompanyFacade) GetCompanyByID(ctx context.Context, id string) (*dto.Det
 
 }
 
+func (f *CompanyFacade) GetCompanyBranding(ctx context.Context, companyID string) (*models.ModelCompanyBranding, error) {
+	return f.appServices.CompanyBrandingService.GetByCompanyID(ctx, companyID)
+}
+
+func (f *CompanyFacade) UpsertCompanyBranding(ctx context.Context, companyID string, input *recipe.CompanyBrandingRecipe) (*models.ModelCompanyBranding, error) {
+	return f.appServices.CompanyBrandingService.Upsert(ctx, companyID, input)
+}
+
+func (f *CompanyFacade) ListCompanyBrandingAssets(ctx context.Context, companyID string) ([]models.ModelCompanyBrandingAsset, error) {
+	return f.appServices.CompanyBrandingService.ListAssets(ctx, companyID)
+}
+
+func (f *CompanyFacade) UploadCompanyBrandingAsset(ctx context.Context, companyID string, input *recipe.CompanyBrandingAssetUploadRecipe) (*models.ModelCompanyBrandingAsset, error) {
+	return f.appServices.CompanyBrandingService.UploadAsset(ctx, companyID, input)
+}
+
+func (f *CompanyFacade) DeleteCompanyBrandingAsset(ctx context.Context, companyID string, assetID string) error {
+	return f.appServices.CompanyBrandingService.DeleteAsset(ctx, companyID, assetID)
+}
+
+func (f *CompanyFacade) ListCompanyEmailTemplates(ctx context.Context, companyID string) ([]models.ModelCompanyEmailTemplate, error) {
+	return f.appServices.CompanyBrandingService.ListEmailTemplates(ctx, companyID)
+}
+
+func (f *CompanyFacade) UpsertCompanyEmailTemplate(ctx context.Context, companyID string, templateKey string, input *recipe.CompanyEmailTemplateRecipe) (*models.ModelCompanyEmailTemplate, error) {
+	return f.appServices.CompanyBrandingService.UpsertEmailTemplate(ctx, companyID, templateKey, input)
+}
+
+func (f *CompanyFacade) CreateCompanyImportJob(ctx context.Context, companyID string, input *recipe.CompanyImportRecipe) (*models.ModelCompanyImportJob, error) {
+	return f.appServices.CompanyBrandingService.CreateImportJob(ctx, companyID, input)
+}
+
+func (f *CompanyFacade) ListCompanyImportJobs(ctx context.Context, companyID string) ([]models.ModelCompanyImportJob, error) {
+	return f.appServices.CompanyBrandingService.ListImportJobs(ctx, companyID)
+}
+
+func (f *CompanyFacade) ExecuteCompanyImportJob(ctx context.Context, companyID string, importJobID string, input *recipe.CompanyImportExecuteRecipe) (*models.ModelCompanyImportJob, error) {
+	return f.appServices.CompanyBrandingService.ExecuteImportJob(ctx, companyID, importJobID, input)
+}
+
 func (f *CompanyFacade) CreateCompany(ctx context.Context, createRecipe *recipe.RecipeCreateCompany) (*models.ModelCompany, error) {
 
 	if _, err := f.appServices.CompanyService.GetCompanyByFiscalIDAndCountry(createRecipe.IDFiscal, 1); err == nil {

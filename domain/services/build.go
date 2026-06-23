@@ -7,22 +7,23 @@ import (
 )
 
 type ServiceContainer struct {
-	UserService         *UserService
-	NotificationService *NotificationService
-	ProfileService      *ProfileService
-	AuthService         *AuthService
-	CurrencyService     *ServiceCurrency
-	ProductService      *ProductService
-	StoreService        *StoreService
-	CompanyService      *CompanyService
-	WarehouseService    *WarehouseService
+	UserService            *UserService
+	NotificationService    *NotificationService
+	ProfileService         *ProfileService
+	AuthService            *AuthService
+	CurrencyService        *ServiceCurrency
+	ProductService         *ProductService
+	StoreService           *StoreService
+	CompanyService         *CompanyService
+	CompanyBrandingService *CompanyBrandingService
+	WarehouseService       *WarehouseService
 	//InventoryRequestService     *InventoryRequestService
-	InventoryCountService *InventoryCountService
-	SupplierService       *SupplierService
-	//PurchaseService             *PurchaseService
-	ProductPerStoreService *ProductPerStoreService // Nueva: Reemplaza ProductCompanyService
-	SupplierProductService *SupplierProductService
-	//SupplierOCService           *SupplierOCService
+	InventoryCountService       *InventoryCountService
+	SupplierService             *SupplierService
+	PurchaseService             *PurchaseService
+	ProductPerStoreService      *ProductPerStoreService // Nueva: Reemplaza ProductCompanyService
+	SupplierProductService      *SupplierProductService
+	SupplierOCService           *SupplierOCService
 	DeliveryPurchaseNoteService *DeliveryPurchaseNoteService
 	WarehousePerProductService  *WarehousePerProductService
 	ProductMovementService      *ProductMovementService
@@ -49,15 +50,16 @@ func Build(
 		ProductService:      NewProductService(data.ProductRepo, data.ProductCodeRepo, externalServices.BucketService, data.CategoryRepo),
 		StoreService:        NewStoreService(data.StoreRepo, data.ProfileAccountRepo, data.UserAccountRepo, externalServices.CacheService, data.PowerAccountRepo),
 
-		CompanyService:   NewCompanyService(data.CompanyRepo, data.ProfileAccountRepo, externalServices.BucketService, externalServices.CacheService, data.UserAccountRepo),
-		WarehouseService: NewWarehouseService(data.WarehouseRepo, data.StoreRepo),
+		CompanyService:         NewCompanyService(data.CompanyRepo, data.ProfileAccountRepo, externalServices.BucketService, externalServices.CacheService, data.UserAccountRepo),
+		CompanyBrandingService: NewCompanyBrandingService(data.CompanyBrandingRepo, externalServices.BucketService),
+		WarehouseService:       NewWarehouseService(data.WarehouseRepo, data.StoreRepo),
 		//InventoryRequestService:     NewInventoryRequestService(data.InventoryRequestRepo),
-		InventoryCountService: NewInventoryCountService(data.InventoryCountRepo, externalServices.CacheService, externalServices.BucketService),
-		SupplierService:       NewSupplierService(data.SupplierRepo),
-		//PurchaseService:             NewPurchaseService(data.PurchaseRepo),
-		ProductPerStoreService: NewProductPerStoreService(data.ProductPerStoreRepo, data.StoreRepo, data.PriceHistoryRepo), // Nueva: Reemplaza ProductCompanyService
-		SupplierProductService: NewSupplierProductService(data.SupplierProductRepo),
-		//SupplierOCService:           NewSupplierOCService(data.SupplierOCRepo),
+		InventoryCountService:       NewInventoryCountService(data.InventoryCountRepo, externalServices.CacheService, externalServices.BucketService),
+		SupplierService:             NewSupplierService(data.SupplierRepo),
+		PurchaseService:             NewPurchaseService(data.PurchaseRepo),
+		ProductPerStoreService:      NewProductPerStoreService(data.ProductPerStoreRepo, data.StoreRepo, data.PriceHistoryRepo), // Nueva: Reemplaza ProductCompanyService
+		SupplierProductService:      NewSupplierProductService(data.SupplierProductRepo),
+		SupplierOCService:           NewSupplierOCService(data.SupplierOCRepo),
 		DeliveryPurchaseNoteService: NewDeliveryPurchaseNoteService(data.DeliveryPurchaseNoteRepo, externalServices.BucketService),
 		WarehousePerProductService:  NewWarehousePerProductService(data.WarehouseProductRepo),
 		ProductMovementService:      NewProductMovementService(data.WasteRepo),

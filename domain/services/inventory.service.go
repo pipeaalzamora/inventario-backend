@@ -4,6 +4,7 @@ import (
 	"context"
 	"sofia-backend/domain/models"
 	"sofia-backend/domain/ports"
+	"sofia-backend/types"
 )
 
 type InventoryService struct {
@@ -34,10 +35,12 @@ func (s *InventoryService) GetSingleProductTransit(ctx context.Context, storeID 
 }
 
 func (s *InventoryService) GetCurrentStock(ctx context.Context, companyId, storeId, warehouseId string) (*models.ModelWarehouseProductStock, error) {
-	s.PowerChecker.EveryPower(ctx,
+	if ok := s.PowerChecker.EveryPower(ctx,
 		PowerPrefixCompany+companyId,
 		PowerPrefixStore+storeId,
-	)
+	); !ok {
+		return nil, types.ThrowPower("No tienes permiso para acceder al stock de esta tienda")
+	}
 
 	return s.repo.GetCurrentStock(companyId, storeId, warehouseId)
 }

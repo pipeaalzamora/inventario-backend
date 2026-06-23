@@ -5,6 +5,7 @@ import (
 	"sofia-backend/api/v1/dto"
 	"sofia-backend/domain/models"
 	"sofia-backend/domain/services"
+	"sofia-backend/types"
 )
 
 type InventoryFacade struct {
@@ -155,6 +156,9 @@ func (f *InventoryFacade) GetSingleProductStockByWarehouse(ctx context.Context, 
 	productStore, err := f.serviceBox.ProductPerStoreService.GetProductPerStoreByID(ctx, storeProductId)
 	if err != nil {
 		return nil, err
+	}
+	if productStore.StoreID != storeId {
+		return nil, types.ThrowPower("El producto no pertenece a la tienda solicitada")
 	}
 
 	// 2. Obtener stock del producto en la bodega específica

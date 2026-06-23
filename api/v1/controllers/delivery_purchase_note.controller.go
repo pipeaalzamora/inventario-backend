@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+	"sofia-backend/api/v1/recipe"
 	"sofia-backend/domain/facades"
+	"sofia-backend/shared"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,19 +20,18 @@ func NewDeliveryPurchaseNoteController(deliveryPurchaseNoteFacade *facades.Deliv
 }
 
 func (c *DeliveryPurchaseNoteController) RegisterRoutes(rg *gin.RouterGroup) {
-	// r := rg.Group("/delivery-purchase-notes")
+	r := rg.Group("/delivery-purchase-notes")
 
-	// r.GET("/by-store/:storeId", c.getAllDeliveryPurchaseNotes)
-	// r.DELETE("/:noteId/file/:fileId", c.removeFileFromDeliveryPurchaseNote)
-	// r.POST("/:id/file", c.uploadFileToDeliveryPurchaseNote)
-	// r.POST("/:id/complete", c.completeDeliveryPurchaseNote)
-	// r.POST("/:id/fix", c.fixDeliveryPurchaseNote)
-	// r.GET("/:id", c.getDeliveryPurchaseNoteByID)
-	// r.PUT("/:id", c.updateDeliveryPurchaseNote)
-	// r.POST("", c.createDeliveryPurchaseNote)
+	r.GET("/by-store/:storeId", c.getAllDeliveryPurchaseNotes)
+	r.DELETE("/:noteId/file/:fileId", c.removeFileFromDeliveryPurchaseNote)
+	r.POST("/:id/file", c.uploadFileToDeliveryPurchaseNote)
+	r.POST("/:id/complete", c.completeDeliveryPurchaseNote)
+	r.POST("/:id/fix", c.fixDeliveryPurchaseNote)
+	r.GET("/:id", c.getDeliveryPurchaseNoteByID)
+	r.PUT("/:id", c.updateDeliveryPurchaseNote)
+	r.POST("", c.createDeliveryPurchaseNote)
 }
 
-/*
 func (c *DeliveryPurchaseNoteController) getAllDeliveryPurchaseNotes(gctx *gin.Context) {
 	type pathParams struct {
 		StoreId string `uri:"storeId" binding:"required"`
@@ -218,4 +220,3 @@ func (c *DeliveryPurchaseNoteController) fixDeliveryPurchaseNote(gctx *gin.Conte
 
 	gctx.JSON(http.StatusOK, dto)
 }
-*/

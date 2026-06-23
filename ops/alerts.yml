@@ -1,0 +1,29 @@
+groups:
+  - name: sofia-backend
+    rules:
+      - alert: SofiaBackendDown
+        expr: up{job="sofia-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Sofia backend no responde"
+          description: "Prometheus no puede scrapear /api/v1/metrics por mas de 2 minutos."
+
+      - alert: SofiaBackendHigh5xx
+        expr: increase(sofia_http_responses_total{class="5xx"}[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Errores 5xx elevados"
+          description: "El backend acumulo mas de 5 respuestas 5xx en 5 minutos."
+
+      - alert: SofiaBackendHighLatency
+        expr: sofia_http_request_duration_seconds_avg > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latencia promedio alta"
+          description: "La latencia promedio del backend supera 1 segundo durante 10 minutos."

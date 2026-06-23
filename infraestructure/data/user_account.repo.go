@@ -315,6 +315,19 @@ func (r *UserAccountRepo) UpdateUserPassword(userId string, password string) err
 	return nil
 }
 
+func (r *UserAccountRepo) UpdateUserPasswordHashOnly(userId string, password string) error {
+	query := `
+		UPDATE user_accounts
+		SET user_password = $1, updated_at = NOW()
+		WHERE id = $2
+	`
+	_, err := r.db.Exec(query, password, userId)
+	if err != nil {
+		return types.ThrowData("Error al actualizar el hash de contraseña del usuario")
+	}
+	return nil
+}
+
 func (r *UserAccountRepo) UpdateUser(id string, user *models.UserAccountModel) (*models.UserAccountModel, error) {
 	query := `
 		UPDATE user_accounts

@@ -118,6 +118,9 @@ func (s *DeliveryPurchaseNoteService) GetDeliveryPurchaseNoteByID(ctx context.Co
 }
 
 func (s *DeliveryPurchaseNoteService) GetAllDeliveryPurchaseNotes(ctx context.Context, storeID string, page int, size int, filter *map[string]interface{}) ([]models.ModelDeliveryPurchaseNote, int, error) {
+	if ok := s.EveryPower(ctx, PowerPrefixStore+storeID); !ok {
+		return nil, 0, types.ThrowPower("No tienes permiso para acceder a recepciones de esta tienda")
+	}
 	return s.repo.GetAllDeliveryPurchaseNotes(storeID, page, size, filter)
 }
 

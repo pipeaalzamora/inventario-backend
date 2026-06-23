@@ -1,0 +1,7 @@
+ALTER TABLE company_import_jobs
+    ADD COLUMN IF NOT EXISTS rows JSONB NOT NULL DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS mapping JSONB NOT NULL DEFAULT '{}'::jsonb,
+    ADD COLUMN IF NOT EXISTS processed_rows integer NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS failed_rows integer NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS errors JSONB NOT NULL DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS executed_at TIMESTAMP;

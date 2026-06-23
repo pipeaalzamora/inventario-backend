@@ -1,9 +1,18 @@
 package facades
 
 import (
+	"context"
+	"fmt"
+	"sofia-backend/api/v1/dto"
+	"sofia-backend/api/v1/recipe"
 	"sofia-backend/config"
 	"sofia-backend/domain/external"
+	"sofia-backend/domain/models"
 	"sofia-backend/domain/services"
+	"sofia-backend/infraestructure/entities"
+	"sofia-backend/shared"
+	"sofia-backend/types"
+	"time"
 )
 
 type PurchaseFacade struct {
@@ -16,7 +25,6 @@ func NewPurchaseFacade(appService *services.ServiceContainer, externalService *e
 	return &PurchaseFacade{appService: appService, externalservices: externalService, isDebug: config.Debug}
 }
 
-/*
 func (f *PurchaseFacade) GetAllPurchase(ctx context.Context, storeID string, page int, size int, filter *map[string]interface{}) (shared.PaginationResponse[models.ModelPurchase], error) {
 	purchases, total, err := f.appService.PurchaseService.GetAllPurchase(ctx, storeID, page, size, filter)
 	if err != nil {
@@ -111,11 +119,7 @@ func (f *PurchaseFacade) CreatePurchaseOrder(ctx context.Context, purchase *reci
 		fmt.Println("Approve Request Error getting supplier email:", err)
 	}
 
-	// enviar el correo con la url junto al token
-	err = f.externalservices.EmailService.SendSupplierViewEmail(supplierEmail, token, exp)
-	if err != nil {
-		fmt.Println("Error sending supplier email:", err)
-	}
+	sendSupplierViewTemplateEmail(ctx, f.appService.CompanyBrandingService, f.externalservices.EmailService, purchase.CompanyID, supplierEmail, token, exp)
 
 	// Send Notification to users with purchase power
 
@@ -226,11 +230,7 @@ func (f *PurchaseFacade) RetryWithOtherSupplier(ctx context.Context, purchaseID 
 			fmt.Println("Approve Request Error getting supplier email:", err)
 		}
 
-		// enviar el correo con la url junto al token
-		err = f.externalservices.EmailService.SendSupplierViewEmail(supplierEmail, token, exp)
-		if err != nil {
-			fmt.Println("Error sending supplier email:", err)
-		}
+		sendSupplierViewTemplateEmail(ctx, f.appService.CompanyBrandingService, f.externalservices.EmailService, purchase.CompanyID, supplierEmail, token, exp)
 
 		err = f.appService.PurchaseService.AddSonOCToPurchase(purchase.ID, created.ID)
 		if err != nil {
@@ -474,4 +474,3 @@ func (f *PurchaseFacade) toDto(purchase *models.ModelPurchase) *dto.DTOPurchase 
 
 	return dtoPurchase
 }
-*/

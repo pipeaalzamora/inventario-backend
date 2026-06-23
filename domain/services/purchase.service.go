@@ -1,7 +1,12 @@
 package services
 
 import (
+	"context"
+	"sofia-backend/api/v1/recipe"
+	"sofia-backend/domain/models"
 	"sofia-backend/domain/ports"
+	"sofia-backend/infraestructure/entities"
+	"sofia-backend/types"
 )
 
 type PurchaseService struct {
@@ -15,7 +20,6 @@ func NewPurchaseService(repo ports.PortPurchase) *PurchaseService {
 	}
 }
 
-/*
 func (s *PurchaseService) CreatePurchaseOrder(ctx context.Context, purchase *recipe.RecipePurchase) (*models.ModelPurchase, error) {
 	if ok := s.EveryPower(ctx, PowerPurchaseCreate); !ok {
 		return nil, types.ThrowPower("No tienes permiso para crear ordenes de compra")
@@ -123,8 +127,8 @@ func (s *PurchaseService) CreatePurchaseOrderWithInventoryRequest(
 	purchase *recipe.RecipePurchase,
 	userId string,
 ) (*models.ModelPurchase, error) {
-	if ok := s.EveryPower(ctx, PowerPurchaseCreate, PowerRequestCreate); !ok {
-		return nil, types.ThrowPower("No tienes permiso para crear ordenes de compra o solicitudes")
+	if ok := s.EveryPower(ctx, PowerPurchaseCreate); !ok {
+		return nil, types.ThrowPower("No tienes permiso para crear ordenes de compra")
 	}
 	if ok := s.EveryPower(ctx, PowerPrefixCompany+purchase.CompanyID, PowerPrefixStore+purchase.StoreID); !ok {
 		return nil, types.ThrowPower("No tienes permiso de propiedad sobre esta compañía o tienda")
@@ -168,12 +172,8 @@ func (s *PurchaseService) CreatePurchaseOrderWithInventoryRequest(
 }
 
 func (s *PurchaseService) CancelPurchase(ctx context.Context, purchaseID string, observation string) error {
-	if ok := s.EveryPower(ctx, PowerPurchaseUpdate, PowerRequestUpdate); !ok {
-		return shared.PowerError{
-			Message: fmt.Sprintf(
-				"User has not the required powers: %v",
-				[]string{PowerPurchaseUpdate, PowerRequestUpdate}),
-		}
+	if ok := s.EveryPower(ctx, PowerPurchaseUpdate); !ok {
+		return types.ThrowPower("No tienes permiso para cancelar ordenes de compra")
 	}
 
 	return s.repo.CancelPurchase(purchaseID, observation)
@@ -181,13 +181,8 @@ func (s *PurchaseService) CancelPurchase(ctx context.Context, purchaseID string,
 
 func (s *PurchaseService) ApprovePurchase(ctx context.Context, purchaseID string) error {
 	if ok := s.EveryPower(ctx, PowerPurchaseApprove, PowerPurchaseUpdate); !ok {
-		return shared.PowerError{
-			Message: fmt.Sprintf(
-				"User has not the required power: %v",
-				PowerPurchaseApprove),
-		}
+		return types.ThrowPower("No tienes permiso para aprobar ordenes de compra")
 	}
 
 	return s.repo.ApprovePurchase(purchaseID)
 }
-*/

@@ -102,13 +102,7 @@ func (s *StoreService) GetStoresByCompanyID(ctx context.Context, companyId strin
 		}
 	}
 
-	// FALTAN LOS PERMISOS PARA PODER FILTRAR
-	allStores, err = s.storeRepo.GetStoresByCompanyID(companyId)
-	if err != nil {
-		return nil, err
-	}
-
-	return allStores, nil
+	return result, nil
 }
 
 func (s *StoreService) GetStoreByID(ctx context.Context, id string) (*models.StoreModel, error) {

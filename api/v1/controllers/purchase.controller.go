@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+	"sofia-backend/api/v1/recipe"
 	"sofia-backend/domain/facades"
+	"sofia-backend/shared"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,18 +18,17 @@ func NewPurchaseController(purchaseFacade *facades.PurchaseFacade) *PurchaseCont
 }
 
 func (pc *PurchaseController) RegisterRoutes(rg *gin.RouterGroup) {
-	// r := rg.Group("/purchases")
+	r := rg.Group("/purchases")
 
-	// r.GET("by-store/:storeId", pc.getPurchases)
-	// r.GET("by-request/:requestId", pc.getPurchasesByInventoryRequestID)
-	// r.POST("retry/:purchaseId", pc.retryWithOtherSupplier)
-	// r.POST("approve/:purchaseId", pc.approvePurchase)
-	// r.POST("cancel/:purchaseId", pc.cancelPurchase)
-	// r.GET(":id", pc.getPurchaseByID)
-	// r.POST("", pc.createPurchase)
+	r.GET("by-store/:storeId", pc.getPurchases)
+	r.GET("by-request/:requestId", pc.getPurchasesByInventoryRequestID)
+	r.POST("retry/:purchaseId", pc.retryWithOtherSupplier)
+	r.POST("approve/:purchaseId", pc.approvePurchase)
+	r.POST("cancel/:purchaseId", pc.cancelPurchase)
+	r.GET(":id", pc.getPurchaseByID)
+	r.POST("", pc.createPurchase)
 }
 
-/*
 func (pc *PurchaseController) getPurchases(gctx *gin.Context) {
 	type pathParams struct {
 		StoreId string `uri:"storeId" binding:"required"`
@@ -174,4 +176,3 @@ func (pc *PurchaseController) cancelPurchase(gctx *gin.Context) {
 
 	gctx.JSON(http.StatusOK, purchase)
 }
-*/

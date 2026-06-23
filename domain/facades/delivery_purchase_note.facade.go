@@ -1,9 +1,19 @@
 package facades
 
 import (
+	"context"
+	"fmt"
+	"math"
+	"sofia-backend/api/v1/dto"
+	"sofia-backend/api/v1/recipe"
 	"sofia-backend/config"
 	"sofia-backend/domain/external"
+	"sofia-backend/domain/models"
 	"sofia-backend/domain/services"
+	"sofia-backend/infraestructure/entities"
+	"sofia-backend/shared"
+	"sofia-backend/types"
+	"time"
 )
 
 type DeliveryPurchaseNoteFacade struct {
@@ -20,7 +30,6 @@ func NewDeliveryPurchaseNoteFacade(appServices *services.ServiceContainer, exter
 	}
 }
 
-/*
 func (f *DeliveryPurchaseNoteFacade) CreateDeliveryPurchaseNote(ctx context.Context, note *recipe.RecipeDeliveryPurchaseNote) (*dto.DTODeliveryPurchaseNote, error) {
 	purchase, err := f.validateAndProcessDeliveryNote(ctx, note)
 	if err != nil {
@@ -119,57 +128,7 @@ func (f *DeliveryPurchaseNoteFacade) ConfirmDeliveryPurchaseNote(ctx context.Con
 		return nil, err
 	}
 
-	// Check if inventory request needs to be completed
-	modelPurchases, err := f.appServices.PurchaseService.GetPurchasesByInventoryRequestID(modelPurchase.InventoryRequestID)
-	if err != nil {
-		return nil, err
-	}
-
-	// check if purchase has children
-	var purchaseParents map[string]bool = make(map[string]bool)
-	for _, p := range modelPurchases {
-		if p.ParentPurchaseID != nil {
-			purchaseParents[*(p.ParentPurchaseID)] = true
-		}
-	}
-
-	// check if all purchases are completed
-	mustComplete := true
-
-purchaseLoop:
-	for _, p := range modelPurchases {
-		if purchaseParents[p.ID] {
-			// check if exists products rejected
-			for _, item := range p.Items {
-				if item.Status == entities.ItemPurchaseStatusRejected {
-					fmt.Println("Found rejected item in purchase with children, cannot complete inventory request")
-					// if exists, inventory request cannot be completed
-					mustComplete = false
-					break purchaseLoop // This will exit the outer loop immediately
-				}
-			}
-
-			// if purchase has children
-			continue
-		}
-
-		// if one purchase is not completed or cancelled, inventory request cannot be completed
-		if p.Status == entities.PurchaseStatusCompleted || p.Status == entities.PurchaseStatusCancelled {
-			continue
-		} else {
-			fmt.Println("Found non-completed purchase with children, cannot complete inventory request")
-			mustComplete = false
-			break purchaseLoop
-		}
-	}
-
-	// if all purchases are completed or cancell, complete inventory request
-	if mustComplete {
-		_, err = f.appServices.InventoryRequestService.ChangeStatus(ctx, modelPurchase.InventoryRequestID, entities.RequestStatusCompleted, nil)
-		if err != nil {
-			return nil, err
-		}
-	}
+	_ = modelPurchase
 
 	return f.GetDeliveryPurchaseNoteByID(ctx, deliveryPurchaseNoteID)
 }
@@ -255,11 +214,7 @@ func (f *DeliveryPurchaseNoteFacade) GeneratePurchaseCorrectionNote(ctx context.
 		fmt.Println("Approve Request Error getting supplier email:", err)
 	}
 
-	// enviar el correo con la url junto al token
-	err = f.externalservices.EmailService.SendSupplierViewEmail(supplierEmail, token, exp)
-	if err != nil {
-		fmt.Println("Error sending supplier email:", err)
-	}
+	sendSupplierViewTemplateEmail(ctx, f.appServices.CompanyBrandingService, f.externalservices.EmailService, purchase.CompanyID, supplierEmail, token, exp)
 
 	err = f.appServices.PurchaseService.AddSonOCToPurchase(purchase.ID, created.ID)
 	if err != nil {
@@ -654,4 +609,3 @@ func (f *DeliveryPurchaseNoteFacade) transferProductsFromTransitionWarehouse(ctx
 
 	return nil
 }
-*/

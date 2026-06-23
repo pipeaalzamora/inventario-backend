@@ -18,6 +18,7 @@ type DataContainer struct {
 	SupplierRepo             ports.PortSupplier
 	StoreRepo                ports.PortStore
 	CompanyRepo              ports.PortCompany
+	CompanyBrandingRepo      ports.PortCompanyBranding
 	WarehouseRepo            ports.PortWarehouse
 	InventoryRequestRepo     ports.PortInventoryRequest
 	InventoryCountRepo       ports.PortInventoryCount
@@ -31,7 +32,7 @@ type DataContainer struct {
 	WasteRepo                ports.PortProductMovement
 	MeasurementRepo          ports.PortMeasurement
 	RequestRepo              ports.PortRequest
-	PriceHistoryRepo         ports.PortPriceHistory		
+	PriceHistoryRepo         ports.PortPriceHistory
 	// DEPRECATED: ProductCompanyRepo - usar ProductPerStoreRepo
 }
 
@@ -58,6 +59,7 @@ func Build(
 		SupplierRepo:             NewSupplierRepo(postgresDB),
 		StoreRepo:                NewStoreRepo(postgresDB, powerRepo, _wareHouseRepo),
 		CompanyRepo:              NewCompanyRepo(postgresDB, powerRepo),
+		CompanyBrandingRepo:      NewCompanyBrandingRepo(postgresDB),
 		WarehouseRepo:            NewWarehouseRepo(postgresDB),
 		InventoryRequestRepo:     NewInventoryRequestRepo(postgresDB),
 		InventoryCountRepo:       NewInventoryCountRepo(postgresDB),
@@ -71,6 +73,6 @@ func Build(
 		WasteRepo:                NewProductMovementRepo(postgresDB),
 		MeasurementRepo:          _measurementRepo,
 		RequestRepo:              _requestRepo,
-		PriceHistoryRepo: 		  NewPriceHistoryRepo(postgresDB),
+		PriceHistoryRepo:         NewPriceHistoryRepo(postgresDB),
 	}
 }

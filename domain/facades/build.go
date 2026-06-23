@@ -54,7 +54,7 @@ func Build(
 		InventoryFacade:      NewInventoryFacade(services),
 		InventoryCountFacade: NewInventoryCountFacade(services),
 		//InventoryRequestFacade: NewInventoryRequestFacade(services, external, config),
-		//PurchaseFacade:         NewPurchaseFacade(services, external, config),
+		PurchaseFacade: NewPurchaseFacade(services, external, config),
 		SupplierFacade: NewSupplierFacade(services),
 		//SupplierOCFacade:       NewSupplierOCFacade(services),
 		ProductMovementFacade: NewProductMovementFacade(services),

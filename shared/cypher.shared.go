@@ -1,53 +1,49 @@
 package shared
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-
-	// "golang.org/x/crypto/bcrypt"
-	"crypto/rand"
 	"errors"
 	"math/big"
+	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Código creado a partir de la implementación del siguiente enlace:
 // https://github.com/Pyxis-GMS/project-nikki-admin-api/blob/main/src/core/utils/crafter.ts
 
-// Dejo las 2 versiones de CreatePassword y CheckPassword comentadas para que puedas elegir la que prefieras.
-// La primera usa bcrypt y la segunda usa sha256 para generar un hash de la contraseña.
-// Ambas son seguras, pero tienen diferentes características de rendimiento y almacenamiento.
-// Si decides usar bcrypt, asegúrate de importar el paquete "golang.org/x/crypto/bcrypt".
-// Si decides usar sha256, no necesitas importar ningún paquete adicional.
-// Si decides usar bcrypt, puedes descomentar las siguientes dos funciones y comentar las de abajo
-// que usan sha256.
-
-// Para claves de acceso, bcrypt es generalmente preferido por su resistencia a ataques de fuerza bruta.
-
-// func CreatePassword(phrase, secret string) (string, error) {
-// 	combined := phrase + secret
-// 	hash, err := bcrypt.GenerateFromPassword([]byte(combined), bcrypt.DefaultCost)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	return string(hash), nil
-// }
-
-// func CheckPassword(phrase, hash, secret string) bool {
-// 	combined := phrase + secret
-// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(combined))
-// 	return err == nil
-// }
-
 func CreatePassword(phrase, secret string) string {
-	combined := phrase + secret
-	hash := sha256.Sum256([]byte(combined))
-	return hex.EncodeToString(hash[:])
+	digest := legacyPasswordDigest(phrase, secret)
+	hash, err := bcrypt.GenerateFromPassword([]byte(digest), bcrypt.DefaultCost)
+	if err != nil {
+		return digest
+	}
+	return string(hash)
 }
 
 func CheckPassword(phrase, hash, secret string) bool {
-	expected := CreatePassword(phrase, secret)
-	return expected == hash
+	digest := legacyPasswordDigest(phrase, secret)
+	if IsBcryptPasswordHash(hash) {
+		return bcrypt.CompareHashAndPassword([]byte(hash), []byte(digest)) == nil
+	}
+	return digest == hash
+}
+
+func IsBcryptPasswordHash(hash string) bool {
+	return strings.HasPrefix(hash, "$2a$") || strings.HasPrefix(hash, "$2b$") || strings.HasPrefix(hash, "$2y$")
+}
+
+func PasswordNeedsRehash(hash string) bool {
+	return !IsBcryptPasswordHash(hash)
+}
+
+func legacyPasswordDigest(phrase, secret string) string {
+	combined := phrase + secret
+	hash := sha256.Sum256([]byte(combined))
+	return hex.EncodeToString(hash[:])
 }
 
 func CreateRandomNumber(length int) (string, error) {

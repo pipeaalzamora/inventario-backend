@@ -54,8 +54,8 @@ func (s *ProductService) GetAllProducts() ([]models.ModelProduct, error) {
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, productInput *recipe.RecipeProductInput) (*models.ModelProduct, error) {
-	if ok := s.EveryPower(ctx, PowerProductUpdate); !ok {
-		return nil, types.ThrowPower("No tienes permiso para actualizar productos")
+	if ok := s.EveryPower(ctx, PowerProductCreate); !ok {
+		return nil, types.ThrowPower("No tienes permiso para crear productos")
 	}
 
 	newProduct := &models.ModelProduct{

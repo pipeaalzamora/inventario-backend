@@ -11,6 +11,7 @@ import (
 	"sofia-backend/shared"
 	"sofia-backend/types"
 	"time"
+	"unicode"
 )
 
 type AuthFacade struct {
@@ -44,6 +45,13 @@ func (f *AuthFacade) Login(ctx context.Context, body recipe.LoginRecipe) (*dto.U
 
 	if !shared.CheckPassword(body.Password, userAccountByEmail.UserPassword, f.secret) {
 		return nil, types.ThrowMsg("Usuario o contraseña incorrectos")
+	}
+
+	if shared.PasswordNeedsRehash(userAccountByEmail.UserPassword) {
+		userAccountByEmail.UserPassword = shared.CreatePassword(body.Password, f.secret)
+		if err := f.appService.UserService.UpdateUserPasswordHashOnly(ctx, userAccountByEmail.ID, userAccountByEmail.UserPassword); err != nil {
+			return nil, err
+		}
 	}
 
 	powers, err := f.appService.ProfileService.GetPowersByUserID(ctx, userAccountByEmail.ID)
@@ -134,6 +142,9 @@ func (f *AuthFacade) ChangePasswordWithRecoveryCode(ctx context.Context, body *r
 	if body.NewPassword != body.ConfirmPassword {
 		return types.ThrowMsg("La contraseña nueva y la confirmación no coinciden.")
 	}
+	if err := validatePasswordStrength(body.NewPassword); err != nil {
+		return err
+	}
 
 	code, err := f.appService.AuthService.GetPersistedRecoveryCode(ctx, body.UserEmail)
 	if err != nil {
@@ -189,6 +200,9 @@ func (f *AuthFacade) ChangePassword(ctx context.Context, body *recipe.ChangePass
 	if body.NewPassword != body.ConfirmPassword {
 		return types.ThrowMsg("La contraseña nueva y la confirmación no coinciden.")
 	}
+	if err := validatePasswordStrength(body.NewPassword); err != nil {
+		return err
+	}
 
 	user, err := f.appService.UserService.GetUserByID(ctx, userId)
 	if err != nil {
@@ -220,6 +234,30 @@ func (f *AuthFacade) ChangePassword(ctx context.Context, body *recipe.ChangePass
 	_, err = f.appService.UserService.UpdateUser(ctx, user.ID, userInput)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func validatePasswordStrength(password string) error {
+	if len(password) < 10 {
+		return types.ThrowMsg("La contraseña debe tener al menos 10 caracteres.")
+	}
+
+	var hasUpper, hasLower, hasNumber bool
+	for _, char := range password {
+		switch {
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsNumber(char):
+			hasNumber = true
+		}
+	}
+
+	if !hasUpper || !hasLower || !hasNumber {
+		return types.ThrowMsg("La contraseña debe incluir mayúsculas, minúsculas y números.")
 	}
 
 	return nil

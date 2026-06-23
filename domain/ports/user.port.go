@@ -8,6 +8,7 @@ type PortUser interface {
 	UpdateUser(id string, user *models.UserAccountModel) (*models.UserAccountModel, error)
 	UpdateUserWithProfiles(userId string, input *models.UserAccountModel, profileIDs []string) (*models.UserAccountModel, error)
 	UpdateUserPassword(userId string, password string) error
+	UpdateUserPasswordHashOnly(userId string, password string) error
 	CreateUserWithProfiles(input *models.UserAccountModel, profileIDs []string) (*models.UserAccountModel, error)
 	CreateUser(user *models.UserAccountModel) (*models.UserAccountModel, error)
 	GetUsersByProfileID(page int, size int, filter *map[string]interface{}, profileID string) ([]models.UserAccountModel, int, error)

@@ -59,7 +59,7 @@ func (m *EmailService) SendWelcomeEmail(to string, generatedPassword string, url
 }
 
 func (m *EmailService) SendSupplierViewEmail(to string, token string, exp time.Time) error {
-	url := fmt.Sprintf("%s/supplier-manage-oc?token=%s", m.frontUrl, token)
+	url := m.SupplierViewURL(token)
 	html, err := m.renderService.Render("templates/supplier_view.html", map[string]interface{}{
 		"Url": html.EscapeString(url),
 		"Exp": exp.Format("01-02-2006 15:04 MST"),
@@ -74,4 +74,12 @@ func (m *EmailService) SendSupplierViewEmail(to string, token string, exp time.T
 	}
 
 	return nil
+}
+
+func (m *EmailService) SupplierViewURL(token string) string {
+	return fmt.Sprintf("%s/supplier-manage-oc?token=%s", m.frontUrl, token)
+}
+
+func (m *EmailService) SendHTML(to string, subject string, body string) error {
+	return m.emailService.Send([]string{to}, subject, body)
 }

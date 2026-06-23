@@ -51,15 +51,12 @@ const (
 	PowerSupplierDelete = PowerPrefixSupplier + "delete"
 )
 
-// ==================== PURCHASE POWERS ====================
-/*
 const (
 	PowerPurchaseCreate  = "purchase:create"
 	PowerPurchaseUpdate  = "purchase:update"
 	PowerPurchaseApprove = "purchase:approve"
 	PowerPurchaseDelete  = "purchase:delete"
 )
-*/
 
 // ==================== INVENTORY REQUEST POWERS ====================
 

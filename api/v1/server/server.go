@@ -2,17 +2,35 @@ package server
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	apiservices "sofia-backend/api/v1/api-services"
 	"sofia-backend/api/v1/controllers"
 	"sofia-backend/config"
 	"sofia-backend/domain/facades"
 	"sofia-backend/types"
+	"strconv"
+	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
+
+var metrics = &httpMetrics{}
+
+type httpMetrics struct {
+	totalRequests atomic.Uint64
+	totalErrors   atomic.Uint64
+	inFlight      atomic.Int64
+	latencyNs     atomic.Uint64
+	status2xx     atomic.Uint64
+	status3xx     atomic.Uint64
+	status4xx     atomic.Uint64
+	status5xx     atomic.Uint64
+}
 
 func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin.Engine {
 	// Crea una nueva instancia de Gin
@@ -25,18 +43,9 @@ func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin
 
 	router := gin.New()
 
-	if cfg.Debug {
-		router.Use(gin.Logger())
-
-		router.Use(cors.New(cors.Config{
-			AllowAllOrigins:  true, // igual que AllowOrigins: []string{"*"}
-			AllowMethods:     []string{"*"},
-			AllowHeaders:     []string{"*"},
-			ExposeHeaders:    []string{"*"},
-			AllowCredentials: false, // debe ser false si AllowAllOrigins es true
-			AllowWildcard:    true,  // permite el uso de "*"
-		}))
-	}
+	router.Use(requestLogger())
+	router.Use(metricsMiddleware())
+	router.Use(cors.New(corsConfig(cfg)))
 	router.Use(getRecovery())
 	router.Use(getErrorHandler())
 
@@ -46,6 +55,7 @@ func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin
 	api.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+	api.GET("/metrics", metricsHandler)
 
 	// auth controller
 	authController := controllers.NewAuthController(appContainer.AuthFacade, cfg)
@@ -103,8 +113,8 @@ func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin
 	productCompanyController.RegisterRoutes(api)
 
 	// Purchase controller
-	//purchaseController := controllers.NewPurchaseController(appContainer.PurchaseFacade)
-	//purchaseController.RegisterRoutes(api)
+	purchaseController := controllers.NewPurchaseController(appContainer.PurchaseFacade)
+	purchaseController.RegisterRoutes(api)
 
 	// Supplier controller
 	supplierController := controllers.NewSupplierController(
@@ -113,8 +123,8 @@ func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin
 	supplierController.RegisterRoutes(api)
 
 	// Delivery Purchase Note controller
-	//deliveryPurchaseNoteController := controllers.NewDeliveryPurchaseNoteController(appContainer.DeliveryPurchaseNoteFacade)
-	//deliveryPurchaseNoteController.RegisterRoutes(api)
+	deliveryPurchaseNoteController := controllers.NewDeliveryPurchaseNoteController(appContainer.DeliveryPurchaseNoteFacade)
+	deliveryPurchaseNoteController.RegisterRoutes(api)
 
 	// Product Movement controller
 	productMovementController := controllers.NewProductMovementController(appContainer.ProductMovementFacade)
@@ -128,11 +138,109 @@ func NewV1Server(cfg *config.Config, appContainer *facades.FacadeContainer) *gin
 	storeProductController := controllers.NewStoreProductController(appContainer.StoreProductFacade)
 	storeProductController.RegisterRoutes(api)
 
-
 	requestController := controllers.NewRequestController(appContainer.RequestFacade)
 	requestController.RegisterRoutes(api)
 
 	return router
+}
+
+func corsConfig(cfg *config.Config) cors.Config {
+	if cfg.Debug {
+		return cors.Config{
+			AllowAllOrigins:  true,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Authorization", "Content-Type", "Accept"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: false,
+			AllowWildcard:    true,
+		}
+	}
+
+	origins := []string{}
+	if strings.TrimSpace(cfg.FrontUrl) != "" {
+		origins = append(origins, strings.TrimRight(cfg.FrontUrl, "/"))
+	}
+
+	return cors.Config{
+		AllowOrigins:     origins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+	}
+}
+
+func requestLogger() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		start := time.Now()
+		ctx.Next()
+
+		slog.Info("http_request",
+			"method", ctx.Request.Method,
+			"path", ctx.FullPath(),
+			"status", ctx.Writer.Status(),
+			"latency_ms", time.Since(start).Milliseconds(),
+			"client_ip", ctx.ClientIP(),
+		)
+	}
+}
+
+func metricsMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		start := time.Now()
+		metrics.inFlight.Add(1)
+		defer metrics.inFlight.Add(-1)
+
+		ctx.Next()
+
+		status := ctx.Writer.Status()
+		metrics.totalRequests.Add(1)
+		metrics.latencyNs.Add(uint64(time.Since(start).Nanoseconds()))
+		switch {
+		case status >= 500:
+			metrics.status5xx.Add(1)
+			metrics.totalErrors.Add(1)
+		case status >= 400:
+			metrics.status4xx.Add(1)
+			metrics.totalErrors.Add(1)
+		case status >= 300:
+			metrics.status3xx.Add(1)
+		default:
+			metrics.status2xx.Add(1)
+		}
+	}
+}
+
+func metricsHandler(ctx *gin.Context) {
+	total := metrics.totalRequests.Load()
+	avgLatency := float64(0)
+	if total > 0 {
+		avgLatency = float64(metrics.latencyNs.Load()) / float64(total) / float64(time.Second)
+	}
+
+	body := strings.Join([]string{
+		"# HELP sofia_http_requests_total Total HTTP requests.",
+		"# TYPE sofia_http_requests_total counter",
+		"sofia_http_requests_total " + strconv.FormatUint(total, 10),
+		"# HELP sofia_http_errors_total Total HTTP requests ending in 4xx or 5xx.",
+		"# TYPE sofia_http_errors_total counter",
+		"sofia_http_errors_total " + strconv.FormatUint(metrics.totalErrors.Load(), 10),
+		"# HELP sofia_http_in_flight_requests Current in-flight HTTP requests.",
+		"# TYPE sofia_http_in_flight_requests gauge",
+		"sofia_http_in_flight_requests " + strconv.FormatInt(metrics.inFlight.Load(), 10),
+		"# HELP sofia_http_request_duration_seconds_avg Average HTTP request duration in seconds since process start.",
+		"# TYPE sofia_http_request_duration_seconds_avg gauge",
+		"sofia_http_request_duration_seconds_avg " + strconv.FormatFloat(avgLatency, 'f', 6, 64),
+		"# HELP sofia_http_responses_total HTTP responses by status class.",
+		"# TYPE sofia_http_responses_total counter",
+		"sofia_http_responses_total{class=\"2xx\"} " + strconv.FormatUint(metrics.status2xx.Load(), 10),
+		"sofia_http_responses_total{class=\"3xx\"} " + strconv.FormatUint(metrics.status3xx.Load(), 10),
+		"sofia_http_responses_total{class=\"4xx\"} " + strconv.FormatUint(metrics.status4xx.Load(), 10),
+		"sofia_http_responses_total{class=\"5xx\"} " + strconv.FormatUint(metrics.status5xx.Load(), 10),
+		"",
+	}, "\n")
+
+	ctx.Data(http.StatusOK, "text/plain; version=0.0.4; charset=utf-8", []byte(body))
 }
 
 func getErrorHandler() gin.HandlerFunc {

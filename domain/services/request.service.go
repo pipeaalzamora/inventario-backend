@@ -46,10 +46,17 @@ func (s *RequestService) CreateRequest(ctx context.Context, request *recipe.Reci
 		return nil, types.ThrowRecipe("Tipo de solicitud no válido", "requestType")
 	}
 
+	if ok := s.EveryPower(ctx, PowerPrefixCompany+request.CompanyID, PowerPrefixStore+request.StoreID); !ok {
+		return nil, types.ThrowPower("No tienes permiso para crear solicitudes en esta empresa o tienda")
+	}
+
 	//verificar si la empresa y la tienda son de la misma empresa
-	_store, err := s.storeRepo.GetStoreByCompanyID(request.CompanyID)
+	_store, err := s.storeRepo.GetStoreByID(request.StoreID)
 	if err != nil {
 		return nil, err
+	}
+	if _store == nil {
+		return nil, types.ThrowData("Tienda no encontrada")
 	}
 	if _store.CompanyID != request.CompanyID {
 		return nil, types.ThrowPower("La empresa y la tienda no son de la misma empresa")

@@ -1,0 +1,33 @@
+name: sofia-backend-prod
+
+services:
+  api:
+    image: ${SOFIA_BACKEND_IMAGE:?SOFIA_BACKEND_IMAGE is required}
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      - redis
+      - search
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
+    volumes:
+      - redis_data:/data
+
+  search:
+    image: getmeili/meilisearch:v1.15
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${SEARCH_API_KEY:?SEARCH_API_KEY is required}
+      MEILI_ENV: production
+    volumes:
+      - meilisearch_data:/data.ms
+
+volumes:
+  redis_data:
+  meilisearch_data:
